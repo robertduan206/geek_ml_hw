@@ -1,0 +1,57 @@
+请在 word 当中记录详细的调参过程，包括参数和结果；
+请解释选择该调参步骤的原因；
+请报告在测试集上的准确率；
+（选做）尝试不同的模型的组合，检查是否可以提升。
+
+
+
+
+
+根据5cv在train dataset上的error为准
+1. 初始参数
+params = {'num_thread': 4, 'num_leaves': 12, 'metric': 'binary', 'objective': 'binary', 
+          'num_round': 1000, 'learning_rate': 0.02, 'feature_fraction': 0.8, 'bagging_fraction': 0.8}
+5cv误差：0.08008
+
+
+2. 为了提高调参速度，learning_rate改为0.04， num_round:500
+params = {'num_thread': 4, 'num_leaves': 12, 'metric': 'binary', 'objective': 'binary', 
+          'num_round': 500, 'learning_rate': 0.04, 'feature_fraction': 0.8, 'bagging_fraction': 0.8}
+0.08019
+降低学习率是会影响error_rate，先调其他参数，最后再调小lr和增大num_round看表现
+
+3. 先调num_leaves:  [15,  40, 60, 100]
+15效果最好0.08039999999999999 不如12的时候，重新设置阈值
+
+4. 先调num_leaves: [3,6,9,10]
+3时效果最好为0.07966000000000002
+params = {'num_thread': 4, 'num_leaves': 3, 'metric': 'binary', 'objective': 'binary', 
+          'num_round': 500, 'learning_rate': 0.04, 'feature_fraction': 0.8, 'bagging_fraction': 0.8}
+
+
+5. 调feature_fraction和bagging_fraction，范围选定分别选定[0.7, 0.8, 0.9]
+当调低fraction时，发现需要更多的num_round, 将num_round调高到1000
+选择上都没有变化，还是选用默认的0.8, 0.8 
+params = {'num_thread': 4, 'num_leaves': 3, 'metric': 'binary', 'objective': 'binary', 
+      'num_round': 1000, 'learning_rate': 0.04, 'feature_fraction': 0.8, 'bagging_fraction': 0.8}
+
+6. 调高num_round降低lr为 4000和0.01，其他不变
+params = {'num_thread': 4, 'num_leaves': 3, 'metric': 'binary', 'objective': 'binary', 
+      'num_round': 4000, 'learning_rate': 0.01, 'feature_fraction': 0.8, 'bagging_fraction': 0.8}
+结果变化不大0.07984
+降低学习率提高round并没有降低error，所以选用在第4次试验时最好的参数
+params = {'num_thread': 4, 'num_leaves': 3, 'metric': 'binary', 'objective': 'binary', 
+          'num_round': 500, 'learning_rate': 0.04, 'feature_fraction': 0.8, 'bagging_fraction': 0.8}
+
+
+
+第六个试验在测试机上的准确率
+在测试集上的准确率是0.91588
+
+
+
+
+
+
+
+
